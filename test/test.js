@@ -36,20 +36,20 @@ describe('Questions', function () {
           done();
         });
     })
-    // it('should not have less than 2 choices', function(done){
-    //   var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}]};
-    //   request(app)
-    //     .post('/api/questions')
-    //     .set('Accept', 'application/json')
-    //     .send(question)
-    //     .expect('Content-Type', /json/)
-    //     .expect(200)
-    //     .end(function(err, res){
-    //       expect(res.body.status).to.equal("error");
-    //       expect(res.body.message).to.equal("Question must have at least 2 choices");
-    //       done();
-    //     });
-    // })
+    it('should not have less than 2 choices', function(done){
+      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}]};
+      request(app)
+        .post('/api/questions')
+        .set('Accept', 'application/json')
+        .send(question)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res){
+          expect(res.body.status).to.equal("error");
+          expect(res.body.message.choices.message).to.equal("Total number of `choices` is less than 2");
+          done();
+        });
+    })
     it('min selections should be greater than 0', function(done){
       var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 0, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
       request(app)
@@ -78,8 +78,22 @@ describe('Questions', function () {
           done();
         });
     })
+    it('max selections should be less than total choices', function(done){
+      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 2, maxSelections: 3, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
+      request(app)
+        .post('/api/questions')
+        .set('Accept', 'application/json')
+        .send(question)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res){
+          expect(res.body.status).to.equal("error");
+          expect(res.body.message.maxSelections.message).to.equal("Path `maxSelections` is greater than total choices");
+          done();
+        });
+    })
     it('min selections should be less than or equal to max selections', function(done){
-      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 3, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'} , {description: 'choice 3'}]};
+      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 3, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}]};
       request(app)
         .post('/api/questions')
         .set('Accept', 'application/json')
@@ -89,6 +103,20 @@ describe('Questions', function () {
         .end(function(err, res){
           expect(res.body.status).to.equal("error");
           expect(res.body.message.minSelections.message).to.equal("Path `minSelections` is greater than Path `maxSelections`");
+          done();
+        });
+    })
+    it('min and max selections should be equal when question type is ranked', function(done){
+    	var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: true, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
+      request(app)
+        .post('/api/questions')
+        .set('Accept', 'application/json')
+        .send(question)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res){
+          expect(res.body.status).to.equal("error");
+          expect(res.body.message.ranked.message).to.equal("Path `minSelections` must equal `maxSelections` when ranked is true");
           done();
         });
     })
