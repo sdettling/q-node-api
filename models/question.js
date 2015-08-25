@@ -1,5 +1,6 @@
 // Load required packages
 var mongoose = require('mongoose');
+var _us = require("underscore");
 
 var ChoiceSchema = new mongoose.Schema({
 	description: {type: String, required: true},
@@ -34,6 +35,13 @@ QuestionSchema.path('ranked').validate(function (value) {
 QuestionSchema.path('choices').validate(function (value) {
 	return value.length > 1;
 }, 'Total number of `{PATH}` is less than 2');
+QuestionSchema.path('choices').validate(function (value) {
+	return value.length == _us.uniq(_us.pluck(value, 'description')).length;
+}, 'Choices must be unique');
+ChoiceSchema.path('description').validate(function (value) {
+	return value.length <= 300;
+}, 'Character count of `{PATH}` must be 300 or less');
+
 
 // Export the Mongoose model
 module.exports = mongoose.model('Question', QuestionSchema);

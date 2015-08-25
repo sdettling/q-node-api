@@ -120,37 +120,70 @@ describe('Questions', function () {
           done();
         });
     })
-    // it('max selections should be less than or equal to total choices', function(done){
-    //   var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 2, maxSelections: 3, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
-    //   request(app)
-    //     .post('/api/questions')
-    //     .set('Accept', 'application/json')
-    //     .send(question)
-    //     .expect('Content-Type', /json/)
-    //     .expect(200)
-    //     .end(function(err, res){
-    //       expect(res.body.status).to.equal("error");
-    //       expect(res.body.message).to.equal("Max selections cannot be higher than the total number of choices");
-    //       done();
-    //     });
-    // })
+    it('should have a description less than 300 characters', function(done){
+      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1 lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum'}, {description: 'choice 2'}]};
+      request(app)
+        .post('/api/questions')
+        .set('Accept', 'application/json')
+        .send(question)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res){
+          expect(res.body.status).to.equal("error");
+          expect(res.body.message['choices.0.description'].message).to.equal("Character count of `description` must be 300 or less");
+          done();
+        });
+    })
+    it('should have unique choices', function(done){
+      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice'}, {description: 'choice'}]};
+      request(app)
+        .post('/api/questions')
+        .set('Accept', 'application/json')
+        .send(question)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res){
+          expect(res.body.status).to.equal("error");
+          expect(res.body.message.choices.message).to.equal("Choices must be unique");
+          done();
+        });
+    })
     /*
-    it('min selections should be less than or equal to max selections', function(done){})
-    it('min and max selections should be equal when question type is ranked', function(done){})
     it('should belong to a user', function(done){})
-    it('should have a description less than 300 characters', function(done){})
     it('should return unauthorized if user not logged in', function(done){})
-    it('should have unique choices', function(done){})
     it('should use user account with matching email')
     it('should create new user if user with that email does not exist')
     */
   });
+  describe('GET /api/question', function(){
+    it('responds with json', function(done){
+      request(app)
+        .get('/api/question/' + testQuestionId)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        done();
+    })
+  });
   describe('PUT /api/questions', function(){
-    //it('responds with json', function(done){})
+    it('responds with json', function(done){
+      var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 4, ranked: false, published: false, choices: [ {description: 'choice 5'}, {description: 'choice 6'}, {description: 'choice 7'}, {description: 'choice 8'}]};
+      request(app)
+        .put('/api/questions/' + testQuestionId)
+        .set('Accept', 'application/json')
+        .send(question)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res){
+          expect(res.body.status).to.equal("success");
+          expect(res.body.data._id).not.to.be.null;
+          done();
+        });
+    })
     //it('should not replace identical choices', function(done){})
   });
   describe('DELETE /api/questions', function(){
-    it('responds with json', function(done){done();})
+    //it('responds with json', function(done){done();})
     it('deletes the specified question', function(done){
       request(app)
         .delete('/api/questions/' + testQuestionId)
