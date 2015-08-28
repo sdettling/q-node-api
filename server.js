@@ -3,6 +3,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var questionController = require('./controllers/question');
+var answerController = require('./controllers/answer');
 
 // Connect to database
 mongoose.connect('mongodb://localhost:27017/quiryapi');
@@ -34,8 +35,12 @@ router.route('/questions/:question_id')
 	.put(questionController.putQuestion)
 	.delete(questionController.deleteQuestion);
 
-//router.route('/questions/:question_id/answers')
-//  .post(authController.isAuthenticated, answerController.postAnswers);
+router.route('/questions/:question_id/answers')
+	.post(answerController.postAnswer);
+
+router.route('/questions/:question_id/answers/:answer_id')
+	.delete(answerController.deleteAnswer);
+
 /*  .get(authController.isAuthenticated, answerController.getAnswers);
 router.route('/questions/:question_id/answers/:answer_id')
   .get(authController.isAuthenticated, answerController.getAnswer)
