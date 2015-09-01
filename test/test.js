@@ -36,7 +36,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('should not have less than 2 choices', function(done){
+		it('should fail to validate when question has less than 2 choices', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}]};
 			request(app)
 			.post('/api/questions')
@@ -50,7 +50,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('min selections should be greater than 0', function(done){
+		it('should fail to validate when min selections is less than 1', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 0, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
 			request(app)
 			.post('/api/questions')
@@ -64,7 +64,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('max selections should be greater than 0', function(done){
+		it('should fail to validate when max selections is less than 1', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 2, maxSelections: 0, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
 			request(app)
 			.post('/api/questions')
@@ -78,7 +78,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('max selections should be less than total choices', function(done){
+		it('should fail to validate when max selections is greater than total choices', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 2, maxSelections: 3, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
 			request(app)
 			.post('/api/questions')
@@ -92,7 +92,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('min selections should be less than or equal to max selections', function(done){
+		it('should fail to validate when min selections is greater than max selections', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 3, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}]};
 			request(app)
 			.post('/api/questions')
@@ -106,7 +106,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('min and max selections should be equal when question type is ranked', function(done){
+		it('should fail to validate when min and max selections are not equal when question type is ranked', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: true, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
 			request(app)
 			.post('/api/questions')
@@ -120,7 +120,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('should have a description less than 300 characters', function(done){
+		it('should fail to validate when the description is greater than 300 characters', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1 lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum'}, {description: 'choice 2'}]};
 			request(app)
 			.post('/api/questions')
@@ -134,7 +134,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		it('should have unique choices', function(done){
+		it('should fail to validate when question contains multiple identical choices', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice'}, {description: 'choice'}]};
 			request(app)
 			.post('/api/questions')
@@ -205,7 +205,7 @@ describe('Answers', function () {
 	describe('POST /api/answers', function(){
 		it('responds with json on success', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 4, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}, {description: 'choice 4'}]};
-			var answer = { displayName: 'My answer.', votes: [] };
+			var answer = { displayName: 'Steve', votes: [] };
 			var application = request(app);
 			application.post('/api/questions')
 			.set('Accept', 'application/json')
@@ -215,6 +215,7 @@ describe('Answers', function () {
 			.end(function(err, res){
 				testQuestionId = res.body.data._id;
 				answer.votes.push({value: 1, choiceId: res.body.data.choices[0]._id})
+				answer.votes.push({value: 1, choiceId: res.body.data.choices[1]._id})
 				application.post('/api/questions/' + testQuestionId + '/answers')
 				.set('Accept', 'application/json')
 				.send(answer)
@@ -227,9 +228,27 @@ describe('Answers', function () {
 				});
 			});
 		})
+		// it('fails validation if no votes', function(done){})
+		// it('fails validation if num votes is greater than max', function(done){})
+		// it('fails validation if num votes does not fall between min and max', function(done){})
+		// it('fails validation if votes values are not sequential when ranked', function(done){})
+		// it('fails validation if votes values are not equal when not ranked', function(done){})
+		// it("updates question's choices' total values", function(done){})
+	});
+	describe('GET /api/questions/_id/answers', function(){
+		it('should return an array of answers', function(done){
+			request(app)
+			.get('/api/questions/' + testQuestionId + "/answers")
+			.set('Accept', 'application/json')
+			.expect('Content-Type', /json/)
+			.expect(200)
+			.end(function(err, res){
+				done();
+			});
+		})
 	});
 	describe('DELETE /api/answers', function(){
-		it('deletes the specified question', function(done){
+		it('deletes the specified answer', function(done){
 			var application = request(app);
 			application.delete('/api/questions/' + testQuestionId + '/answers/' + testAnswerId)
 			.set('Accept', 'application/json')

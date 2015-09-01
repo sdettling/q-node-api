@@ -4,7 +4,7 @@ var _us = require("underscore");
 
 var ChoiceSchema = new mongoose.Schema({
 	description: {type: String, required: true},
-	totalVotes: {type: Number, min: 0}
+	totalValue: {type: Number, min: 0}
 });
 
 // Define our question schema
@@ -18,7 +18,6 @@ var QuestionSchema = new mongoose.Schema({
 	createdDate: {type: Date, required: true},
 	modifiedDate: {type: Date},
 	publishedDate: {type: Date},
-	//userId: {type: String, required: true},
 	choices: [ChoiceSchema]
 });
 

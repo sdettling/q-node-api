@@ -36,9 +36,11 @@ router.route('/questions/:question_id')
 	.delete(questionController.deleteQuestion);
 
 router.route('/questions/:question_id/answers')
+	.get(answerController.getAnswers)
 	.post(answerController.postAnswer);
 
 router.route('/questions/:question_id/answers/:answer_id')
+	.get(answerController.getAnswer)
 	.delete(answerController.deleteAnswer);
 
 /*  .get(authController.isAuthenticated, answerController.getAnswers);

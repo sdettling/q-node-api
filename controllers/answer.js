@@ -19,9 +19,13 @@ exports.postAnswer = function(req, res) {
 	// console.log("answer controller");
 	// Save the answer and check for errors
 	answer.save(function(err) {
-		if (err)
-			res.send(err);
-		res.json({ message: 'Answer added!', data: answer });
+		if (err) {
+			res.json({ status: 'error', data: answer, message : err.message });
+		}
+		else {
+			res.json({ status: 'success', data: answer, message: 'Answer added' });
+			//update choice total value
+		}
 	});
 };
 
@@ -36,7 +40,7 @@ exports.postAnswer = function(req, res) {
 //   });
 // };
 
-// Create endpoint /api/questions/:answer_id for GET
+// Create endpoint /api/questions/:question_id/answers/:answer_id for GET
 exports.getAnswer = function(req, res) {
 	// Use the Answer model to find a specific answer
 	Answer.find({ _id: req.params.answer_id }, function(err, answer) {
@@ -44,6 +48,17 @@ exports.getAnswer = function(req, res) {
 			res.send(err);
 
 		res.json(answer);
+	});
+};
+
+// Create endpoint /api/questions/:question_id/answers for GET
+exports.getAnswers = function(req, res) {
+	// Use the Answer model to find a specific answer
+	Answer.find({ questionId: req.params.question_id }, function(err, answers) {
+		if (err)
+			res.send(err);
+
+		res.json(answers);
 	});
 };
 
