@@ -1,146 +1,243 @@
 <!doctype html>
 <html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-
-        <link rel="stylesheet" href="../css/main.css">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../css/main.css">
+</head>
 <body>
-<h1>
-  This is a h1
-</h1>
-<div class="bar radio grey">
-  <input type="radio"></input>
-  <label>
-    Radio
-  </label>
-</div>
-<div class="bar radio selected grey">
-  <input type="radio"></input>
-  <label>
-    Selected Radio
-  </label>
-</div>
-<div class="bar radio grey results">
-  <input type="radio"></input>
-  <label>
-    Selected Radio
-  </label>
-  <div class="result-bar"></div>
-  <div class="result-info">
-    5 votes
-  </div>
-</div>
-<div class="bar checkbox grey">
-  <input type="checkbox"></input>
-  <label>
-    Checkbox
-  </label>
-</div>
-<div class="bar checkbox selected grey">
-  <input type="checkbox"></input>
-  <label>
-    Selected Checkbox
-  </label>
-</div>
-<ol>
-  <li class="bar grey">
-    <div class="drag-grip"></div>
-    <label>
-      Ranked Choice
-    </label>
-  </li>
-  <li class="bar selected grey">
-    <div class="drag-grip"></div>
-    <label>
-      Ranked Choice
-    </label>
-  </li>
-</ol>
-<div class="text-input grey">
-  <input type="text"></input>
-</div>
-<div class="text-area grey">
-  <textarea></textarea>
-</div>
-<div class="text-area choice grey">
-  <textarea></textarea>
-  <div class="add-toggle remove"></div>
-</div>
-<div class="bar add-fields choice grey">
-  Add Fields
-  <div class="add-toggle"></div>
-</div>
-<a class="bar button grey">
-  Button
-</a>
-<ul class="inline">
-  <li class="bar checkbox grey">
-    <input type="checkbox">
-      <label>
-        Label 1
-      </label>
-    </input>
-  </li>
-  <li class="bar checkbox grey">
-    <input type="checkbox">
-      <label>
-        Checkbox 2
-      </label>
-    </input>
-  </li>
-  <li class="bar checkbox selected grey">
-    <input type="checkbox">
-      <label>
-        Check 3
-      </label>
-    </input>
-  </li>
-  <li class="bar checkbox grey">
-    <input type="checkbox">
-      <label>
-        Item 4
-      </label>
-    </input>
-  </li>
-  <li class="bar checkbox grey">
-    <input type="checkbox">
-      <label>
-        5
-      </label>
-    </input>
-  </li>
-</ul>
-<div class="question">
-  <h2>
-    Example of a question
-  </h2>
-  <div class="info">
-    info about the question
-  </div>
-  <ul>
-    <li class="bar checkbox grey">
-      <input type="checkbox"></input>
-      <label>
-        Label 1
-      </label>
-    </li>
-    <li class="bar checkbox grey">
-      <input type="checkbox"></input>
-      <label>
-        Label 2
-      </label>
-    </li>
-    <li class="bar checkbox grey">
-      <input type="checkbox"></input>
-      <label>
-        Label 3
-      </label>
-    </li>
-  </ul>
-</div>
+
+	<section class="question">
+		<h2 class="question-description">
+			True or false?
+		</h2>
+		<div class="question-info">
+			Pick one.
+		</div>
+		<ul class="radio-list choices">
+			<li>
+				<input type="radio"></input>
+				<label>
+					True
+				</label>
+			</li>
+			<li>
+				<input type="radio"></input>
+				<label>
+					False
+				</label>
+			</li>
+		</ul>
+		<a href="#" class="button">Vote</a>
+	</section>
+
+	<section class="question">
+		<h2 class="question-description">
+			Multiple choice question?
+		</h2>
+		<div class="question-info">
+			Pick all that apply.
+		</div>
+		<ul class="checkbox-list choices">
+			<li>
+				<input type="checkbox"></input>
+				<label>
+					Label 1
+				</label>
+			</li>
+			<li>
+				<input type="checkbox"></input>
+				<label>
+					Label 2
+				</label>
+			</li>
+			<li>
+				<input type="checkbox"></input>
+				<label>
+					Label 3
+				</label>
+			</li>
+			<li>
+				<input type="checkbox"></input>
+				<label>
+					Label 4
+				</label>
+			</li>
+		</ul>
+		<a href="#" class="button">Vote</a>
+	</section>
+
+	<section class="question">
+		<h2 class="question-description">
+			Ranking question?
+		</h2>
+		<div class="question-info">
+			Drag your picks into the right order.
+		</div>
+		<ol class="draggable-list choices">
+			<li>
+				<div class="drag-grip"></div>
+				<label>
+					Label 1
+				</label>
+			</li>
+			<li>
+				<div class="drag-grip"></div>
+				<label>
+					Label 2
+				</label>
+			</li>
+			<li>
+				<div class="drag-grip"></div>
+				<label>
+					Label 3
+				</label>
+			</li>
+			<li>
+				<div class="drag-grip"></div>
+				<label>
+					Label 4
+				</label>
+			</li>
+		</ol>
+		<a href="#" class="button">Vote</a>
+	</section>
+
+
+	<h1>
+		This is a h1
+	</h1>
+	<div class="bar radio grey">
+		<input type="radio"></input>
+		<label>
+			Radio
+		</label>
+	</div>
+	<div class="bar radio selected grey">
+		<input type="radio"></input>
+		<label>
+			Selected Radio Extra Long Description Lorem Ipsum Dolor Amet
+		</label>
+	</div>
+	<div class="bar radio grey results">
+		<input type="radio"></input>
+		<label>
+			Selected Radio
+		</label>
+		<div class="result-bar"></div>
+		<div class="result-info">
+			5 votes
+		</div>
+	</div>
+	<div class="bar checkbox grey">
+		<input type="checkbox"></input>
+		<label>
+			Checkbox
+		</label>
+	</div>
+	<div class="bar checkbox selected grey">
+		<input type="checkbox"></input>
+		<label>
+			Selected Checkbox
+		</label>
+	</div>
+	<ol>
+		<li class="bar grey">
+			<div class="drag-grip"></div>
+			<label>
+				Ranked Choice
+			</label>
+		</li>
+		<li class="bar selected grey">
+			<div class="drag-grip"></div>
+			<label>
+				Ranked Choice
+			</label>
+		</li>
+	</ol>
+	<div class="text-input grey">
+		<input type="text"></input>
+	</div>
+	<div class="text-area grey">
+		<textarea></textarea>
+	</div>
+	<div class="text-area choice grey">
+		<textarea></textarea>
+		<div class="add-toggle remove"></div>
+	</div>
+	<div class="bar add-fields choice grey">
+		Add Fields
+		<div class="add-toggle"></div>
+	</div>
+	<a class="bar button grey">
+		Button
+	</a>
+	<ul class="inline">
+		<li class="bar checkbox grey">
+			<input type="checkbox">
+				<label>
+					Label 1
+				</label>
+			</input>
+		</li>
+		<li class="bar checkbox grey">
+			<input type="checkbox">
+				<label>
+					Checkbox 2
+				</label>
+			</input>
+		</li>
+		<li class="bar checkbox selected grey">
+			<input type="checkbox">
+				<label>
+					Check 3
+				</label>
+			</input>
+		</li>
+		<li class="bar checkbox grey">
+			<input type="checkbox">
+				<label>
+					Item 4
+				</label>
+			</input>
+		</li>
+		<li class="bar checkbox grey">
+			<input type="checkbox">
+				<label>
+					5
+				</label>
+			</input>
+		</li>
+	</ul>
+	<div class="question">
+		<h2>
+			Example of a question
+		</h2>
+		<div class="info">
+			info about the question
+		</div>
+		<ul>
+			<li class="bar checkbox grey">
+				<input type="checkbox"></input>
+				<label>
+					Label 1
+				</label>
+			</li>
+			<li class="bar checkbox grey">
+				<input type="checkbox"></input>
+				<label>
+					Label 2
+				</label>
+			</li>
+			<li class="bar checkbox grey">
+				<input type="checkbox"></input>
+				<label>
+					Label 3
+				</label>
+			</li>
+		</ul>
+	</div>
 </body>
 </html>
