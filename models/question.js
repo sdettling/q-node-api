@@ -33,7 +33,7 @@ QuestionSchema.path('ranked').validate(function (value) {
 }, 'Path `minSelections` must equal `maxSelections` when ranked is true');
 QuestionSchema.path('choices').validate(function (value) {
 	return value.length > 1;
-}, 'Total number of `{PATH}` is less than 2');
+}, 'Total number of choices must be greater than 2');
 QuestionSchema.path('choices').validate(function (value) {
 	return value.length == _us.uniq(_us.pluck(value, 'description')).length;
 }, 'Choices must be unique');

@@ -27,15 +27,21 @@ exports.postQuestion = function(req, res) {
 	question.choices = req.body.choices;
 
 	question.save(function(err) {
-		//console.log(err)
-		if (err && ('ValidationError' === err.name || 'Validation failed' === err.message)) {
-			res.status(400).json({ status: 'error', data: question, message : err.errors });
+		if (err && ('ValidationError' === err.name)) {
+			var errors = {};
+			var er = err.errors
+			for (var key in er) {
+				if (er.hasOwnProperty(key)) {
+					errors[key] = er[key].message;
+				}
+			}
+			res.status(400).json({ status: 'fail', data: errors });
 		}
 		else if (err) { 
-			res.status(400).json({ status: 'error', data: question, message : err.message });
+			res.status(400).json({ status: 'error', data: err });
 		}
 		else {
-			res.json({ status: 'success', data: question, message: 'Question added.' });
+			res.json({ status: 'success', data: question });
 		}
 	});
 };
@@ -44,10 +50,12 @@ exports.postQuestion = function(req, res) {
 exports.getQuestions = function(req, res) {
 	// Use the Question model to find all question
 	Question.find(function(err, questions) {
-		if (err)
-			res.send(err);
-
-		res.json(questions);
+		if (err) {
+			res.send({ status: 'error', data: err });
+		}
+		else {
+			res.json({ status: 'success', data: questions });
+		}
 	});
 };
 
@@ -55,10 +63,12 @@ exports.getQuestions = function(req, res) {
 exports.getQuestion = function(req, res) {
 	// Use the Question model to find a specific question
 	Question.find({ _id: req.params.question_id }, function(err, question) {
-		if (err)
-			res.send(err);
-
-		res.json(question);
+		if (err) {
+			res.send({ status: 'error', data: err });
+		}
+		else {
+			res.json({ status: 'success', data: question });
+		}
 	});
 };
 

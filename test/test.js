@@ -11,17 +11,21 @@ var assert = chai.assert,
 describe('Questions', function () {
 	var testQuestionId = null;
 	describe('GET /api/questions', function(){
-		it('responds with json', function(done){
+		it('returns a json object of all questions', function(done){
 			request(app)
 			.get('/api/questions')
 			.set('Accept', 'application/json')
 			.expect('Content-Type', /json/)
 			.expect(200)
-			done();
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				expect(res.body.data.length).to.be.above(0);
+				done();
+			});
 		})
 	});
 	describe('POST /api/questions', function(){
-		it('responds with json on success', function(done){
+		it('adds a new question to the database and responds with resulting json object', function(done){
 			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 4, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}, {description: 'choice 4'}]};
 			request(app)
 			.post('/api/questions')
@@ -32,6 +36,8 @@ describe('Questions', function () {
 			.end(function(err, res){
 				expect(res.body.status).to.equal("success");
 				expect(res.body.data._id).not.to.be.null;
+				expect(res.body.data.description).to.equal("My question?");
+				expect(res.body.data.choices.length).to.equal(4);
 				testQuestionId = res.body.data._id;
 				done();
 			});
@@ -45,8 +51,8 @@ describe('Questions', function () {
 			.expect('Content-Type', /json/)
 			.expect(200)
 			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.choices.message).to.equal("Total number of `choices` is less than 2");
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.choices).to.equal("Total number of choices must be greater than 2");
 				done();
 			});
 		})
