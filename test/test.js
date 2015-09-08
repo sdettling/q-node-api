@@ -149,8 +149,8 @@ describe('Questions', function () {
 			});
 		})
 		/*
-		it('should belong to a user', function(done){})
 		it('should return unauthorized if user not logged in', function(done){})
+		it('should return unauthorized if question belongs to different user', function(done){})
 		it('should use user account with matching email')
 		it('should create new user if user with that email does not exist')
 		*/
@@ -180,7 +180,7 @@ describe('Questions', function () {
 				done();
 			});
 		})
-		//it('should not replace identical choices', function(done){})
+		//it('should not be editable if the question has answers', function(done){})
 	});
 	describe('DELETE /api/questions', function(){
 		//it('responds with json', function(done){done();})
@@ -228,9 +228,21 @@ describe('Answers', function () {
 				});
 			});
 		})
-		// it('fails validation if no votes', function(done){})
-		// it('fails validation if num votes is greater than max', function(done){})
-		// it('fails validation if num votes does not fall between min and max', function(done){})
+		it('fails validation if num votes does not fall between min and max', function(done){
+			var answer = { displayName: 'Steve', votes: [] };
+			var application = request(app);
+			application.post('/api/questions/' + testQuestionId + '/answers')
+			.set('Accept', 'application/json')
+			.send(answer)
+			.expect('Content-Type', /json/)
+			.expect(200)
+			.end(function(err, res){
+				//console.log(res.body)
+				expect(res.body.status).to.equal("error");
+				expect(res.body.message.votes.message).to.equal("Total votes must fall between min and max");
+				done();
+			});
+		})
 		// it('fails validation if votes values are not sequential when ranked', function(done){})
 		// it('fails validation if votes values are not equal when not ranked', function(done){})
 		// it("updates question's choices' total values", function(done){})

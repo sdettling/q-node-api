@@ -27,6 +27,7 @@ exports.postQuestion = function(req, res) {
 	question.choices = req.body.choices;
 
 	question.save(function(err) {
+		//console.log(err)
 		if (err && ('ValidationError' === err.name || 'Validation failed' === err.message)) {
 			res.status(400).json({ status: 'error', data: question, message : err.errors });
 		}
@@ -83,6 +84,8 @@ exports.putQuestion = function(req, res) {
 			}
 			question.modifiedDate = date;
 			question.choices = req.body.choices;
+
+			//console.log(req.body);
 
 			question.save(function(err) {
 				//console.log(err)

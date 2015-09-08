@@ -15,15 +15,21 @@ exports.postAnswer = function(req, res) {
 	answer.questionId = req.params.question_id;
 	answer.votes = req.body.votes;
 
-	// console.log(req.body);
+	//console.log(req.body);
 	// console.log("answer controller");
 	// Save the answer and check for errors
 	answer.save(function(err) {
-		if (err) {
-			res.json({ status: 'error', data: answer, message : err.message });
+		//console.log(err)
+		if (err && ('ValidationError' === err.name || 'Validation failed' === err.message)) {
+			//console.log('validator error')
+			res.status(400).json({ status: 'error', data: answer, message : err.errors });
+		}
+		else if (err) { 
+			//console.log('validator error 2')
+			res.status(400).json({ status: 'error', data: answer, message : err.message });
 		}
 		else {
-			res.json({ status: 'success', data: answer, message: 'Answer added' });
+			res.json({ status: 'success', data: answer, message: 'Answer added.' });
 			//update choice total value
 		}
 	});
