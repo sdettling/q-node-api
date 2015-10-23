@@ -27,7 +27,7 @@ QuestionSchema.path('minSelections').validate(function (value) {
 }, 'Path `{PATH}` is greater than Path `maxSelections`');
 QuestionSchema.path('maxSelections').validate(function (value) {
 	return value <= this.choices.length;
-}, 'Path `{PATH}` is greater than total choices');
+}, 'Max selections must be less than or equal to total choices');
 QuestionSchema.path('ranked').validate(function (value) {
 	return (value) ? this.maxSelections == this.minSelections : true;
 }, 'Path `minSelections` must equal `maxSelections` when ranked is true');

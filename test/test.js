@@ -65,8 +65,8 @@ describe('Questions', function () {
 			.expect('Content-Type', /json/)
 			.expect(200)
 			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.minSelections.message).to.equal("Path `minSelections` (0) is less than minimum allowed value (1).");
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.minSelections).to.equal("Path `minSelections` (0) is less than minimum allowed value (1).");
 				done();
 			});
 		})
@@ -79,8 +79,8 @@ describe('Questions', function () {
 			.expect('Content-Type', /json/)
 			.expect(200)
 			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.maxSelections.message).to.equal("Path `maxSelections` (0) is less than minimum allowed value (1).");
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.maxSelections).to.equal("Path `maxSelections` (0) is less than minimum allowed value (1).");
 				done();
 			});
 		})
@@ -93,8 +93,8 @@ describe('Questions', function () {
 			.expect('Content-Type', /json/)
 			.expect(200)
 			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.maxSelections.message).to.equal("Path `maxSelections` is greater than total choices");
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.maxSelections).to.equal("Max selections must be less than or equal to total choices");
 				done();
 			});
 		})
