@@ -35,6 +35,7 @@ exports.postQuestion = function(req, res) {
 					errors[key] = er[key].message;
 				}
 			}
+			console.log(errors)
 			res.status(400).json({ status: 'fail', data: errors });
 		}
 		else if (err) { 

@@ -1,6 +1,7 @@
 // Load required packages
 var mongoose = require('mongoose');
 var _us = require("underscore");
+mongoose.Error.messages.Number.min  = "{PATH} must be at least {MIN}";
 
 var ChoiceSchema = new mongoose.Schema({
 	description: {type: String, required: true},
@@ -21,25 +22,25 @@ var QuestionSchema = new mongoose.Schema({
 	choices: [ChoiceSchema]
 });
 
-//Custom validations
+//Validations
 QuestionSchema.path('minSelections').validate(function (value) {
 	return value <= this.maxSelections;
-}, 'Path `{PATH}` is greater than Path `maxSelections`');
+}, 'Minimum selections must be less than maximum selections');
 QuestionSchema.path('maxSelections').validate(function (value) {
 	return value <= this.choices.length;
-}, 'Max selections must be less than or equal to total choices');
+}, 'Maximum selections must be less than or equal to total choices');
 QuestionSchema.path('ranked').validate(function (value) {
 	return (value) ? this.maxSelections == this.minSelections : true;
-}, 'Path `minSelections` must equal `maxSelections` when ranked is true');
+}, 'Minimum and maximum selections must be equal for ranked questions');
 QuestionSchema.path('choices').validate(function (value) {
 	return value.length > 1;
 }, 'Total number of choices must be greater than 2');
 QuestionSchema.path('choices').validate(function (value) {
 	return value.length == _us.uniq(_us.pluck(value, 'description')).length;
-}, 'Choices must be unique');
+}, 'Two or more of your choices are the same, all choices must be unique');
 ChoiceSchema.path('description').validate(function (value) {
 	return value.length <= 300;
-}, 'Character count of `{PATH}` must be 300 or less');
+}, 'Choices must be 300 characters or less');
 
 
 // Export the Mongoose model
