@@ -5,9 +5,267 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title></title>
     <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
+	<main>
+		<h1>Voting on a quiry</h1>
+		<h2>Initial quiry state</h2>
+		<section class="quiry">
+			<header>
+				<h3>What are your favorite roller coasters?</h3>
+				<p>Rank the following candidates.</p>
+			</header>
+			<ol class="ranked-candidates">
+				<li class="empty"></li>
+			</ol>
+			<section class="unselected-candidates">
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Skyrush
+				</a>
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					El Toro
+				</a>
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Maverick
+				</a>
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Indimidator 305
+				</a>
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Wildfire
+				</a>
+			</section>
+			<section class="form">
+				<div class="form-element">
+					<label for="respondant">Your name: </label>
+					<input type="text" id="respondant"></input>
+				</div>
+				<a href="#">Cast your vote</a>
+			</section>
+		</section>
+
+		<h2>Items Ranked</h2>
+		<section class="quiry">
+			<header>
+				<h3>What are your favorite roller coasters?</h3>
+				<p>Rank the following candidates.</p>
+			</header>
+			<ol class="ranked-candidates">
+				<li class="engaged">
+					<div class="candidate selected">
+						Skyrush
+						<div class="controls">
+							<span class="symbol arrow-symbol"></span><span class="symbol arrow-symbol down"></span>
+						</div>
+					</div>
+				</li>
+				<li class="engaged">
+					<div class="candidate selected">
+						El Toro
+						<div class="controls">
+							<span class="symbol arrow-symbol"></span><span class="symbol arrow-symbol down"></span>
+						</div>
+					</div>
+				</li>
+			</ol>
+			<section class="unselected-candidates">
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Maverick
+				</a>
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Indimidator 305
+				</a>
+				<a href="#" class="candidate">
+					<span class="symbol cross-symbol"></span>
+					Wildfire
+				</a>
+			</section>
+			<section class="form">
+				<div class="form-element">
+					<label for="respondant">Your name: </label>
+					<input type="text" id="respondant"></input>
+				</div>
+				<a href="#">Cast your vote</a>
+			</section>
+		</section>
+	</main>
+
+
+	<h3>Unselected States</h3>
+	<span class="symbol cross-symbol"></span>
+	<span class="symbol cross-symbol remove"></span>
+	<span class="symbol arrow-symbol"></span>
+	<span class="symbol arrow-symbol down"></span>
+
+	<div style="margin: 1em; padding: 0.25em; background-color: #ddd;">
+		<div class="candidate">
+			<span class="symbol cross-symbol"></span>
+			Not Chosen
+		</div>
+		<div class="candidate">
+			<span class="symbol cross-symbol"></span>
+			Candidate
+		</div>
+		<div class="candidate">
+			<span class="symbol cross-symbol"></span>
+			Candidate
+		</div>
+		<div class="candidate"><span class="symbol cross-symbol"></span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dictum interdum urna, efficitur tincidunt elit aliquam nec.</div>
+		<div class="candidate"><span class="symbol cross-symbol"></span>Morbi dictum interdum urna, efficitur tincidunt elit aliquam nec.</div>
+	</div>
+
+	<div style="margin: 1em;">
+		<ol class="ordered-list">
+			<li class="empty"></li>
+		</ol>
+		<ol class="ordered-list">
+			<li class="ready"></li>
+		</ol>
+		<ol class="ranked-candidates">
+			<li class="engaged">
+				<div class="candidate selected">
+					<span class="symbol cross-symbol"></span>
+					JljAMyJjJjJjJj
+					<div class="controls">
+						<span class="symbol arrow-symbol"></span><span class="symbol arrow-symbol down"></span>
+					</div>
+				</div>
+			</li>
+		</ol>
+		<ol class="ordered-list">
+			<li class="engaged">
+				<div class="candidate selected">
+					<span class="symbol cross-symbol"></span>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+					<div class="controls">
+						<span class="symbol arrow-symbol"></span><span class="symbol arrow-symbol down"></span>
+					</div>
+				</div>
+			</li>
+		</ol>
+	</div>
+
+	<section class="quiry">
+		<h2>Quiry Initial State</h2>
+		<p class="info">Drag them in order</p>
+		<ol class="candidate-list ordered-list">
+			<li class="empty"></li>
+		</ol>
+		<div class="unwanted-candidates">
+			<div class="candidate">Cow</div>
+			<div class="candidate">Cat</div>
+			<div class="candidate">Dog</div>
+			<div class="candidate">Pig</div>
+		</ul>
+	</section>
+
+	<section class="quiry">
+		<h2>Quiry Add #1 State</h2>
+		<ol class="candidate-list ordered-list">
+			<li class="ready">
+				<div class="candidate dragging">Dog</div>
+			</li>
+		</ol>
+		<div class="unwanted-candidates">
+			<div class="candidate">Cow</div>
+			<div class="candidate">Cat</div>
+			<div class="candidate">Pig</div>
+		</ul>
+	</section>
+
+	<section class="quiry">
+		<h2>Quiry Mid adding a 2nd</h2>
+		<ol class="candidate-list ordered-list">
+			<li class="ready">
+				<div class="candidate selected">Dog</div>
+			</li>
+			<li class="ready"></li>
+		</ol>
+		<div class="unwanted-candidates">
+			<div class="candidate dragging">Cow</div>
+			<div class="candidate">Cat</div>
+			<div class="candidate">Pig</div>
+		</ul>
+	</section>
+
+	<section class="quiry">
+		<h2>Quiry Added 3 State</h2>
+		<ol class="candidate-list ordered-list">
+			<li class="engaged">
+				<div class="candidate selected">Dog</div>
+			</li>
+			<li class="engaged">
+				<div class="candidate selected">Pig</div>
+			</li>
+			<li class="engaged">
+				<div class="candidate selected">Cat</div>
+			</li>
+		</ol>
+		<div class="unwanted-candidates">
+			<div class="candidate">Cow</div>
+		</ul>
+	</section>
+
+	<section class="quiry">
+		<h2>Quiry</h2>
+		<ol class="candidate-list ordered-list">
+			<li>
+				<div class="candidate">Cat</div>
+			</li>
+			<li>
+				<div class="candidate">Dog</div>
+				<div class="candidate">Bat</div>
+			</li>
+			<li>
+				<div class="candidate">Pig</div>
+			</li>
+		</ol>
+		<hr/>
+		<ul class="candidate-list">
+			<li>
+				<div class="candidate">Cow</div>
+			</li>
+		</ul>
+	</section>
+
+	<section class="question">
+		<h2 class="question-description">
+			Rank these [] according to your preferences?
+		</h2>
+		<ol class="draggable-list choices">
+			<li draggable="true">
+				<label>
+					Label 1
+				</label>
+			</li>
+			<li draggable="true">
+				<label>
+					Label 2
+				</label>
+			</li>
+			<li draggable="true">
+				<label>
+					Label 3
+				</label>
+			</li>
+			<li draggable="true">
+				<label>
+					Label 4
+				</label>
+			</li>
+		</ol>
+	</section>
+
+
 
 	<section class="question">
 		<h2 class="question-description">

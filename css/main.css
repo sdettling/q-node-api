@@ -1,16 +1,130 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 html {
   font-family: 'Lato', 'Helvetica', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
-  font-size: 16px; }
+  font-size: 16px;
+  font-weight: 300; }
 
 body {
   background-color: #eee;
   margin: 0; }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: normal;
+  font-weight: 300;
   margin: 0; }
+
+main {
+  margin: 16px; }
+  main .quiry {
+    margin: 40px 0; }
+    main .quiry header {
+      position: relative;
+      background-color: #fff;
+      padding: 10px 10px 10px 16px;
+      margin-bottom: 20px;
+      box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.15); }
+      main .quiry header p {
+        font-size: 14px;
+        color: #666;
+        margin: 5px 0 0 0; }
+      main .quiry header:after {
+        content: "";
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: 3px;
+        background: linear-gradient(to bottom, #ff4e50, #f9d423); }
+    main .quiry .ranked-candidates {
+      margin-bottom: 20px; }
+    main .quiry .unselected-candidates {
+      background-color: #ddd;
+      padding: 5px; }
+      main .quiry .unselected-candidates a {
+        text-decoration: none; }
+    main .quiry .form {
+      margin-top: 20px; }
+      main .quiry .form .form-element {
+        position: relative;
+        background-color: #fff;
+        padding: 0 0 0 100px;
+        margin-bottom: 20px;
+        box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.15); }
+        main .quiry .form .form-element label {
+          width: 80px;
+          position: absolute;
+          top: 10px;
+          left: 10px; }
+        main .quiry .form .form-element input {
+          display: block;
+          width: 100%;
+          color: #666;
+          font-family: 'Lato', 'Helvetica', 'Arial', sans-serif;
+          font-weight: 300;
+          font-size: 16px;
+          height: 39px;
+          border: none;
+          margin: 0;
+          padding: 0; }
+      main .quiry .form a {
+        background-color: #444;
+        color: #fff;
+        padding: 10px;
+        display: block;
+        text-decoration: none;
+        box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.25); }
+
+.symbol {
+  display: inline-block;
+  width: 27px;
+  height: 27px; }
+  .symbol.cross-symbol:before {
+    content: "";
+    display: block;
+    position: absolute;
+    margin-top: 7px;
+    margin-left: 13px;
+    background-color: #999;
+    width: 1px;
+    height: 13px; }
+  .symbol.cross-symbol:after {
+    content: "";
+    display: block;
+    position: absolute;
+    margin-top: 13px;
+    margin-left: 7px;
+    background-color: #999;
+    width: 13px;
+    height: 1px; }
+  .symbol.cross-symbol.remove:before {
+    transform: rotate(45deg); }
+  .symbol.cross-symbol.remove:after {
+    transform: rotate(45deg); }
+  .symbol.arrow-symbol:before {
+    content: "";
+    display: block;
+    position: absolute;
+    background-color: #ccc;
+    margin-top: 5.5px;
+    margin-left: 13px;
+    width: 1px;
+    height: 15px; }
+  .symbol.arrow-symbol:after {
+    content: "";
+    display: block;
+    position: absolute;
+    margin-top: 7px;
+    margin-left: 8px;
+    width: 10px;
+    height: 10px;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    transform: rotate(45deg); }
+  .symbol.arrow-symbol.down:before {
+    margin-top: 4.5px; }
+  .symbol.arrow-symbol.down:after {
+    margin-top: 8px;
+    transform: rotate(225deg); }
 
 .button {
   color: #333;
@@ -20,6 +134,177 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.5em;
   font-weight: bold;
   text-decoration: none; }
+
+.unwanted-candidates {
+  margin-top: 0.5em;
+  background-color: #ddd; }
+
+.ranked-candidates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: li; }
+  .ranked-candidates li {
+    position: relative;
+    min-height: 27px;
+    margin: 8px 0 0 0;
+    padding: 6px; }
+    .ranked-candidates li:before {
+      content: counter(li);
+      counter-increment: li;
+      font-weight: 300;
+      color: #fff;
+      background-color: transparent;
+      text-align: center;
+      width: 27px;
+      margin: 7px 0 0 6px;
+      line-height: 24px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2; }
+    .ranked-candidates li:nth-child(1) {
+      background-color: #ff4e50; }
+    .ranked-candidates li:nth-child(2) {
+      background-color: #fe6848; }
+    .ranked-candidates li:nth-child(3) {
+      background-color: #fc913a; }
+    .ranked-candidates li:nth-child(4) {
+      background-color: #fab72c; }
+    .ranked-candidates li:nth-child(5) {
+      background-color: #f9d423; }
+    .ranked-candidates li .candidate {
+      min-height: 24px;
+      line-height: 24px;
+      padding: 1px 5px 2px 32px; }
+      .ranked-candidates li .candidate:before {
+        content: "";
+        display: block;
+        float: right;
+        width: 53px;
+        height: 16px; }
+    .ranked-candidates li.empty {
+      box-shadow: inset 2px 2px 10px 0px rgba(0, 0, 0, 0.35); }
+      .ranked-candidates li.empty:after {
+        content: "";
+        display: block;
+        height: 39px;
+        background-color: rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; }
+    .ranked-candidates li.ready {
+      box-shadow: inset 2px 2px 8px 0px rgba(0, 0, 0, 0.25); }
+      .ranked-candidates li.ready:after {
+        opacity: 0; }
+    .ranked-candidates li.engaged {
+      box-shadow: inset 0px 0px 1px 0px rgba(0, 0, 0, 0.2); }
+      .ranked-candidates li.engaged:before {
+        font-weight: 400; }
+
+.candidate {
+  display: block;
+  color: #999;
+  min-height: 19px;
+  line-height: 19px;
+  padding: 4px 5px 4px 32px;
+  position: relative;
+  font-weight: 300; }
+  .candidate.dragging {
+    color: #333;
+    font-weight: 400;
+    padding: 0.5em 1em 0.5em 2em;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.3); }
+    .candidate.dragging:before, .candidate.dragging:after {
+      opacity: 0; }
+  .candidate.selected {
+    color: #fff;
+    font-weight: 400; }
+    .candidate.selected:before, .candidate.selected:after {
+      opacity: 0; }
+  .candidate .cross-symbol {
+    position: absolute;
+    top: 0;
+    left: 0; }
+  .candidate .controls {
+    position: absolute;
+    top: 0;
+    right: 0; }
+
+.quirish {
+  margin: 1em;
+  padding: 1em;
+  background-color: #fff; }
+  .quirish .candidate-list {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    .quirish .candidate-list li {
+      min-height: 2em;
+      position: relative;
+      background-color: #ddd;
+      margin: 0.5em 0 0 0;
+      box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.4); }
+      .quirish .candidate-list li .candidate {
+        display: block;
+        color: #fff;
+        height: 2em;
+        line-height: 2em;
+        text-indent: 2em; }
+      .quirish .candidate-list li input {
+        display: none; }
+      .quirish .candidate-list li:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        margin-top: -10px;
+        background-color: #999;
+        width: 1px;
+        height: 21px;
+        transform: rotate(45deg); }
+      .quirish .candidate-list li:after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        background-color: #999;
+        width: 21px;
+        height: 1px;
+        transform: rotate(45deg); }
+    .quirish .candidate-list.ordered-list {
+      counter-reset: li; }
+      .quirish .candidate-list.ordered-list li {
+        opacity: 0.7; }
+        .quirish .candidate-list.ordered-list li:before {
+          content: counter(li);
+          counter-increment: li;
+          color: #fff;
+          background-color: transparent;
+          text-align: center;
+          width: 1.5em;
+          height: 1em;
+          left: 0px;
+          margin-top: 0;
+          top: 10px;
+          line-height: 1em;
+          transform: rotate(0deg); }
+        .quirish .candidate-list.ordered-list li:after {
+          display: none; }
+        .quirish .candidate-list.ordered-list li:nth-child(1) {
+          background-color: #ff4e50; }
+        .quirish .candidate-list.ordered-list li:nth-child(2) {
+          background-color: #fe6848; }
+        .quirish .candidate-list.ordered-list li:nth-child(3) {
+          background-color: #fc913a; }
+        .quirish .candidate-list.ordered-list li:nth-child(4) {
+          background-color: #fab72c; }
+        .quirish .candidate-list.ordered-list li:nth-child(5) {
+          background-color: #f9d423; }
 
 .question {
   margin: 1em;
@@ -81,7 +366,6 @@ h1, h2, h3, h4, h5, h6 {
         text-align: center;
         width: 1.5em;
         height: 1em;
-        font-weight: 700;
         font-style: italic;
         line-height: 1em; }
       .question .choices.draggable-list li:after {

@@ -2,8 +2,8 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-var questionController = require('./controllers/question');
-var answerController = require('./controllers/answer');
+var quiryController = require('./controllers/quiry');
+var ballotController = require('./controllers/ballot');
 
 // Connect to database
 mongoose.connect('mongodb://localhost:27017/quiryapi');
@@ -24,24 +24,25 @@ app.use(bodyParser.json());
 // Create express router
 var router = express.Router();
 
-// Create endpoint handlers for /questions
-router.route('/questions')
-	.post(questionController.postQuestion)
-	.get(questionController.getQuestions);
+// Create endpoint handlers for /quiries
+router.route('/quiries')
+	.post(quiryController.postQuiry)
+	.get(quiryController.getQuiries);
 
-// Create endpoint handlers for /questions/:question_id
-router.route('/questions/:question_id')
-	.get(questionController.getQuestion)
-	.put(questionController.putQuestion)
-	.delete(questionController.deleteQuestion);
+// Create endpoint handlers for /quiries/:quiry_id
+router.route('/quiries/:quiry_id')
+	.get(quiryController.getQuiry)
+	.put(quiryController.putQuiry)
+	.delete(quiryController.deleteQuiry);
 
-router.route('/questions/:question_id/answers')
-	.get(answerController.getAnswers)
-	.post(answerController.postAnswer);
+router.route('/quiries/:quiry_id/ballots')
+	.post(ballotController.postBallot)
+	.get(ballotController.getBallots);
 
-router.route('/questions/:question_id/answers/:answer_id')
-	.get(answerController.getAnswer)
-	.delete(answerController.deleteAnswer);
+router.route('/ballots/:ballot_id')
+	.get(ballotController.getBallot)
+	.put(ballotController.putBallot)
+	.delete(ballotController.deleteBallot);
 
 /*  .get(authController.isAuthenticated, answerController.getAnswers);
 router.route('/questions/:question_id/answers/:answer_id')

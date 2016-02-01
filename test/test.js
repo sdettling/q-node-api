@@ -1,21 +1,197 @@
 var chai = require('chai');
 var request = require('supertest');
 var express = require('express');
+var _us = require('underscore');
 
 var app = require('../server.js');
 
 var assert = chai.assert,
 	expect = chai.expect,
-	should = chai.should(); // Note that should has to be executed
+	should = chai.should();
 
-describe('Questions', function () {
-	var testQuestionId = null;
-	describe('GET /api/questions', function(){
-		it('returns a json object of all questions', function(done){
+/////---- Quiry Tests ----/////
+// 1. Quiry POST tests
+//   a. successful post request
+//   b. fails when too few candidates
+//   c. fails when there are duplicate candidates
+//   d. fails when quiry description is too long
+//   e. fails when candidate descripition is too long
+// 2. Quriy GET tests
+//   a. successful get request
+// 3. Quiry PUT tests
+//   a. successful put request
+//   b. fails to put when published is true
+// 4. Quiry DELETE tests
+//   a. successful delete request
+
+var goodQuiry1 = {
+	description : 'My quiry',
+	email : 'test@quiry.com',
+	published: false,
+	candidates: [
+		{description: 'choice 1'},
+		{description: 'choice 2'},
+		{description: 'choice 3'},
+		{description: 'choice 4'}
+	]
+};
+
+var goodQuiry2 = {
+	description : 'My quiry updated',
+	email : 'test@quiry.com',
+	published: true,
+	candidates: [
+		{description: 'choice 1'},
+		{description: 'choice 2'},
+		{description: 'choice 3'},
+		{description: 'choice 4'}
+	]
+};
+
+var failQuiry1 = {
+	description : 'My quiry',
+	email : 'test@quiry.com',
+	published: false,
+	candidates: [
+		{description: 'choice 1'}
+	]
+};
+
+var failQuiry2 = {
+	description : 'My quiry',
+	email : 'test@quiry.com',
+	published: false,
+	candidates: [
+		{description: 'choice'},
+		{description: 'choice'}
+	]
+};
+
+var failQuiry3 = {
+	description : 'My quiry lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+	email : 'test@quiry.com',
+	published: false,
+	candidates: [
+		{description: 'choice 1'},
+		{description: 'choice 2'}
+	]
+};
+
+var failQuiry4 = {
+	description : 'My quiry',
+	email : 'test@quiry.com',
+	published: false,
+	candidates: [
+		{description: 'choice 1'},
+		{description: 'choice  lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum'}
+	]
+};
+
+describe('Quiries', function () {
+	var testQuiryId = null;
+	describe('POST /api/quiries', function(){
+		it('adds a new quiry to the database and responds with resulting json object', function(done){
 			request(app)
-			.get('/api/questions')
+			.post('/api/quiries')
 			.set('Accept', 'application/json')
-			.expect('Content-Type', /json/)
+			.send(goodQuiry1)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				expect(res.body.data._id).not.to.be.null;
+				expect(res.body.data.description).to.equal("My quiry");
+				expect(res.body.data.candidates.length).to.equal(4);
+				testQuiryId = res.body.data._id;
+				done();
+			});
+		})
+		it('should fail to validate when quiry has less than 2 candidates', function(done){
+			request(app)
+			.post('/api/quiries')
+			.set('Accept', 'application/json')
+			.send(failQuiry1)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.candidates).to.equal("Total number of candidates must be at least 2");
+				done();
+			});
+		})
+		it('should fail to validate when quiry contains multiple identical candidates', function(done){
+			request(app)
+			.post('/api/quiries')
+			.set('Accept', 'application/json')
+			.send(failQuiry2)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.candidates).to.equal("Two or more of your candidates are the same, all candidates must be unique");
+				done();
+			});
+		})
+		it('should fail to validate when quiry description is more than 300 characters long', function(done){
+			request(app)
+			.post('/api/quiries')
+			.set('Accept', 'application/json')
+			.send(failQuiry3)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.description).to.equal("Quiry descriptions must be 300 characters or less");
+				done();
+			});
+		})
+		it('should fail to validate when a cantidate description is more than 300 characters long', function(done){
+			request(app)
+			.post('/api/quiries')
+			.set('Accept', 'application/json')
+			.send(failQuiry4)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data['candidates.1.description']).to.equal("Candidate descriptions must be 300 characters or less");
+				done();
+			});
+		})
+	});
+	describe('GET /api/quiries/:quiry_id', function(){
+		it('returns a json object of a single quiry', function(done){
+			request(app)
+			.get('/api/quiries/' + testQuiryId)
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				expect(res.body.data.description).to.equal("My quiry");
+				expect(res.body.data.candidates.length).to.equal(4);
+				done();
+			});
+		})
+		it('returns error when quiry cannot be found', function(done){
+			request(app)
+			.get('/api/quiries/56a7c1f4661d8f88f2adbc9e')
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("error");
+				expect(res.body.data.message).to.equal("Could not find quiry with that id");
+				done();
+			});
+		})
+	});
+	describe('GET /api/quiries', function(){
+		it('returns a json object of all quiries', function(done){
+			request(app)
+			.get('/api/quiries')
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
 			.expect(200)
 			.end(function(err, res){
 				expect(res.body.status).to.equal("success");
@@ -24,267 +200,245 @@ describe('Questions', function () {
 			});
 		})
 	});
-	describe('POST /api/questions', function(){
-		it('adds a new question to the database and responds with resulting json object', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 4, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}, {description: 'choice 4'}]};
+	describe('PUT /api/quiries/:quiry_id', function(){
+		it('updates a specified quiry', function(done){
 			request(app)
-			.post('/api/questions')
+			.put('/api/quiries/' + testQuiryId)
 			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
+			.send(goodQuiry2)
+			.expect('Content-Type', 'application/json')
 			.expect(200)
 			.end(function(err, res){
 				expect(res.body.status).to.equal("success");
-				expect(res.body.data._id).not.to.be.null;
-				expect(res.body.data.description).to.equal("My question?");
-				expect(res.body.data.choices.length).to.equal(4);
-				testQuestionId = res.body.data._id;
-				done();
-			});
-		})
-		it('should fail to validate when question has less than 2 choices', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("fail");
-				expect(res.body.data.choices).to.equal("Total number of choices must be greater than 2");
-				done();
-			});
-		})
-		it('should fail to validate when min selections is less than 1', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 0, maxSelections: 1, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("fail");
-				expect(res.body.data.minSelections).to.equal("Path `minSelections` (0) is less than minimum allowed value (1).");
-				done();
-			});
-		})
-		it('should fail to validate when max selections is less than 1', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 2, maxSelections: 0, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("fail");
-				expect(res.body.data.maxSelections).to.equal("Path `maxSelections` (0) is less than minimum allowed value (1).");
-				done();
-			});
-		})
-		it('should fail to validate when max selections is greater than total choices', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 2, maxSelections: 3, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("fail");
-				expect(res.body.data.maxSelections).to.equal("Max selections must be less than or equal to total choices");
-				done();
-			});
-		})
-		it('should fail to validate when min selections is greater than max selections', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 3, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.minSelections.message).to.equal("Path `minSelections` is greater than Path `maxSelections`");
-				done();
-			});
-		})
-		it('should fail to validate when min and max selections are not equal when question type is ranked', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: true, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.ranked.message).to.equal("Path `minSelections` must equal `maxSelections` when ranked is true");
-				done();
-			});
-		})
-		it('should fail to validate when the description is greater than 300 characters', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice 1 lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum'}, {description: 'choice 2'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message['choices.0.description'].message).to.equal("Character count of `description` must be 300 or less");
-				done();
-			});
-		})
-		it('should fail to validate when question contains multiple identical choices', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 2, ranked: false, published: false, choices: [ {description: 'choice'}, {description: 'choice'}]};
-			request(app)
-			.post('/api/questions')
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.choices.message).to.equal("Choices must be unique");
-				done();
-			});
-		})
-		/*
-		it('should return unauthorized if user not logged in', function(done){})
-		it('should return unauthorized if question belongs to different user', function(done){})
-		it('should use user account with matching email')
-		it('should create new user if user with that email does not exist')
-		*/
-	});
-	describe('GET /api/question', function(){
-		it('responds with json', function(done){
-			request(app)
-			.get('/api/question/' + testQuestionId)
-			.set('Accept', 'application/json')
-			.expect('Content-Type', /json/)
-			.expect(200)
-			done();
-		})
-	});
-	describe('PUT /api/questions', function(){
-		it('responds with json', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 4, ranked: false, published: false, choices: [ {description: 'choice 5'}, {description: 'choice 6'}, {description: 'choice 7'}, {description: 'choice 8'}]};
-			request(app)
-			.put('/api/questions/' + testQuestionId)
-			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				expect(res.body.status).to.equal("success");
+				expect(res.body.data.description).to.equal("My quiry updated");
 				expect(res.body.data._id).not.to.be.null;
 				done();
 			});
 		})
-		//it('should not be editable if the question has answers', function(done){})
-	});
-	describe('DELETE /api/questions', function(){
-		//it('responds with json', function(done){done();})
-		it('deletes the specified question', function(done){
+		it('fails to update a quiry that has been published', function(done){
 			request(app)
-			.delete('/api/questions/' + testQuestionId)
+			.put('/api/quiries/' + testQuiryId)
 			.set('Accept', 'application/json')
-			.expect('Content-Type', /json/)
+			.send(goodQuiry1)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("error");
+				expect(res.body.data.message).to.equal("Cannot update quiry that has been published");
+				done();
+			});
+		})
+	});
+	describe('DELETE /api/quiries/:quiry_id', function(){
+		it('deletes the specified quiry', function(done){
+			request(app)
+			.delete('/api/quiries/' + testQuiryId)
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
 			.expect(200)
 			.end(function(err, res){
 				expect(res.body.status).to.equal("success");
-				expect(res.body.message).to.equal("Question deleted");
 				done();
 			});
 		})
 	});
 });
 
-describe('Answers', function () {
-	var testQuestionId = null;
-	var testAnswerId = null;
-	describe('POST /api/answers', function(){
-		it('responds with json on success', function(done){
-			var question = { description : 'My question?', email : 'test@quiry.com', minSelections : 1, maxSelections: 4, ranked: false, published: false, choices: [ {description: 'choice 1'}, {description: 'choice 2'}, {description: 'choice 3'}, {description: 'choice 4'}]};
-			var answer = { displayName: 'Steve', votes: [] };
+/////---- Ballot Tests ----/////
+// 1. Ballot POST tests
+//   a. successful post request
+//   b. fails validation when ranking does not start at 1
+//   c. fails validation when ranking is not sequential
+// 2. Ballot GET tests
+//   a. gets all the ballots for a quiry
+//   b. gets a single ballot
+// 3. Ballot PUT tests
+//   a. updates a single ballot
+// 4. Ballot DELETE tests
+//   a. delete a single ballot
+//   b. make sure deleting a quiry also deletes its ballots
+
+var goodQuiry1 = {
+	description : 'My quiry',
+	email : 'test@quiry.com',
+	published: false,
+	candidates: [
+		{description: 'choice 1'},
+		{description: 'choice 2'},
+		{description: 'choice 3'},
+		{description: 'choice 4'}
+	]
+};
+var goodBallot1 = { 
+	respondant: 'Steve', 
+	selections: [] 
+};
+var failBallot1 = { 
+	respondant: 'Steve', 
+	selections: [] 
+};
+var failBallot2 = { 
+	respondant: 'Steve', 
+	selections: [] 
+};
+
+describe('Ballots', function () {
+	var testQuiryBallotId = null;
+	var testBallotId1 = null;
+	var testBallotId2 = null;
+	describe('POST /api/quiries/:quiry_id/ballots', function(){
+		it('adds a new ballot for a certain quiry to the database and responds with resulting json object', function(done){
 			var application = request(app);
-			application.post('/api/questions')
+			application.post('/api/quiries')
 			.set('Accept', 'application/json')
-			.send(question)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				testQuestionId = res.body.data._id;
-				answer.votes.push({value: 1, choiceId: res.body.data.choices[0]._id})
-				answer.votes.push({value: 1, choiceId: res.body.data.choices[1]._id})
-				application.post('/api/questions/' + testQuestionId + '/answers')
-				.set('Accept', 'application/json')
-				.send(answer)
-				.expect('Content-Type', /json/)
-				.expect(200)
-				.end(function(err, res){
-					testAnswerId = res.body.data._id;
-					expect(res.body.data._id).not.to.be.null;
-					done();
-				});
-			});
-		})
-		it('fails validation if num votes does not fall between min and max', function(done){
-			var answer = { displayName: 'Steve', votes: [] };
-			var application = request(app);
-			application.post('/api/questions/' + testQuestionId + '/answers')
-			.set('Accept', 'application/json')
-			.send(answer)
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				//console.log(res.body)
-				expect(res.body.status).to.equal("error");
-				expect(res.body.message.votes.message).to.equal("Total votes must fall between min and max");
-				done();
-			});
-		})
-		// it('fails validation if votes values are not sequential when ranked', function(done){})
-		// it('fails validation if votes values are not equal when not ranked', function(done){})
-		// it("updates question's choices' total values", function(done){})
-	});
-	describe('GET /api/questions/_id/answers', function(){
-		it('should return an array of answers', function(done){
-			request(app)
-			.get('/api/questions/' + testQuestionId + "/answers")
-			.set('Accept', 'application/json')
-			.expect('Content-Type', /json/)
-			.expect(200)
-			.end(function(err, res){
-				done();
-			});
-		})
-	});
-	describe('DELETE /api/answers', function(){
-		it('deletes the specified answer', function(done){
-			var application = request(app);
-			application.delete('/api/questions/' + testQuestionId + '/answers/' + testAnswerId)
-			.set('Accept', 'application/json')
-			.expect('Content-Type', /json/)
+			.send(goodQuiry1)
+			.expect('Content-Type', 'application/json')
 			.expect(200)
 			.end(function(err, res){
 				expect(res.body.status).to.equal("success");
-				expect(res.body.message).to.equal("Answer deleted");
-				application.delete('/api/questions/' + testQuestionId)
+				testQuiryBallotId = res.body.data._id;
+				
+				goodBallot1.selections.push({preference: 1, candidateId: res.body.data.candidates[0]._id})
+				goodBallot1.selections.push({preference: 2, candidateId: res.body.data.candidates[1]._id})
+
+				failBallot1.selections.push({preference: 2, candidateId: res.body.data.candidates[0]._id})
+				failBallot1.selections.push({preference: 2, candidateId: res.body.data.candidates[1]._id})
+
+				failBallot2.selections.push({preference: 1, candidateId: res.body.data.candidates[0]._id})
+				failBallot2.selections.push({preference: 3, candidateId: res.body.data.candidates[1]._id})
+
+
+				application.post('/api/quiries/' + testQuiryBallotId + "/ballots")
 				.set('Accept', 'application/json')
-				.expect('Content-Type', /json/)
+				.send(goodBallot1)
+				.expect('Content-Type', 'application/json')
 				.expect(200)
 				.end(function(err, res){
 					expect(res.body.status).to.equal("success");
-					expect(res.body.message).to.equal("Question deleted");
+					expect(res.body.data._id).not.to.be.null;
+					expect(res.body.data.respondant).to.equal("Steve");
+					expect(res.body.data.selections.length).to.equal(2);
+					testBallotId1 = res.body.data._id;
+					done();
+				});
+			});
+		})
+		it('fails to validate when selections do not start at 1', function(done){
+			request(app).post('/api/quiries/' + testQuiryBallotId + "/ballots")
+			.set('Accept', 'application/json')
+			.send(failBallot1)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.selections).to.equal("Selection ranking must start at 1");
+				done();
+			});
+		})
+		it('fails to validate when selection rankigns are not sequential', function(done){
+			request(app).post('/api/quiries/' + testQuiryBallotId + "/ballots")
+			.set('Accept', 'application/json')
+			.send(failBallot2)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("fail");
+				expect(res.body.data.selections).to.equal("Rankings must be sequential");
+				done();
+			});
+		})
+	});
+	describe('GET /api/quiries/:quiry_id/ballots', function(){
+		it('gets all the ballots for a certain quiry', function(done){
+			var application = request(app);
+			application.post('/api/quiries/' + testQuiryBallotId + "/ballots")
+			.set('Accept', 'application/json')
+			.send(goodBallot1)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				testBallotId2 = res.body.data._id;
+				
+				application.get('/api/quiries/' + testQuiryBallotId + "/ballots")
+				.set('Accept', 'application/json')
+				.expect('Content-Type', 'application/json')
+				.expect(200)
+				.end(function(err, res){
+					expect(res.body.status).to.equal("success");
+					expect(res.body.data.length).to.equal(2);
 					done();
 				});
 			});
 		})
 	});
+	describe('GET /api/ballots/:ballot_id', function(){
+		it('gets a single ballot', function(done){
+			request(app)
+			.get('/api/ballots/' + testBallotId1)
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				expect(res.body.data.respondant).to.equal("Steve");
+				expect(res.body.data.selections.length).to.equal(2);
+				done();
+			});
+		})
+	});
+	describe('PUT /api/ballots/:ballot_id', function(){
+		it('updates a single ballot', function(done){
+
+			goodBallot1.respondant = "Sir";
+
+			request(app)
+			.put('/api/ballots/' + testBallotId1)
+			.set('Accept', 'application/json')
+			.send(goodBallot1)
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				expect(res.body.data.respondant).to.equal("Sir");
+				expect(res.body.data._id).not.to.be.null;
+				done();
+			});
+		});
+	})
+	describe('DELETE /api/ballots/:ballot_id', function(){
+		it('deletes a single ballot', function(done){
+			request(app)
+			.delete('/api/ballots/' + testBallotId1)
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				done();
+			});
+		});
+	})
+	describe('DELETE /api/quiries/:quiry_id', function(){
+		it('deletes a quiry and all of its ballots', function(done){
+			var application = request(app);
+			application.delete('/api/quiries/' + testQuiryBallotId)
+			.set('Accept', 'application/json')
+			.expect('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				expect(res.body.status).to.equal("success");
+				
+				application.get('/api/quiries/' + testQuiryBallotId + "/ballots")
+				.set('Accept', 'application/json')
+				.expect('Content-Type', 'application/json')
+				.expect(200)
+				.end(function(err, res){
+					expect(res.body.status).to.equal("error");
+					expect(res.body.data.message).to.equal("No ballots have been submitted for this quiry");
+					done();
+				});
+			});
+		});
+	})
 });
